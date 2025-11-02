@@ -1,0 +1,27 @@
+x# PyCharm
+.idea/
+*.iml
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual envs
+venv/
+env/
+.venv/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# Cache
+.cache/
+
+# dotenv (секрети!)
+*.env
+.env
