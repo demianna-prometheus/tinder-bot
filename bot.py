@@ -6,27 +6,50 @@ from util import *
 TOKEN = "8372585379:AAHn_PWuzJhscz0jTHXMB6U-a9q-4hYoYto"
 
 async def start(update, context):
-    # await send_photo(update, context, "avatar_main")
-    # await send_text(update, context, "Hello, user")
     msg = load_message("main")
+    await send_photo(update, context, "main")
     await send_text(update, context, msg)
-
-async def hello(update, context):
-    await send_text(update,  context, "Hello " + update.message.text)
-    await send_text_buttons(update, context, "Hello " + update.message.text, buttons={
-        "start": "START",
-        "stop": "STOP"
+    await show_main_menu(update, context, {
+        "start": "Головне меню",
+        "profile": "Генерація Tinder-профілю 😎",
+        "opener": "Повідомлення для знайомства 🥰",
+        "message": "Переписка від вашого імені 😈",
+        "date": "Спілкування зі зірками 🔥",
+        "gpt": "Задати питання ChatGPT 🧠",
     })
 
-async def buttons_handler(update, context):
-    query = update.callback_query.data
-    if query == "start":
-        await send_text(update, context, "Started")
-    elif query == "stop":
-        await send_text(update, context, "Stopped")
+async def gpt(update, context):
+    dialog.mode = "gpt"
+    await send_photo(update, context, "gpt")
+    msg = load_message("gpt")
+    await send_text(update, context, msg)
+
+async def gpt_dialog(update, context):
+    text = update.message.text
+    promt = load_prompt("gpt")
+    answer = await chatgpt.send_question(promt, text)
+    await send_text(update, context, answer)
+
+async def hello(update, context):
+    if dialog.mode == "gpt":
+        await gpt_dialog(update, context)
+
+dialog = Dialog()
+dialog.mode = None
+
+chatgpt = ChatGptService(token="javcgkmmT5+ss2PGB5P+5fVNiZS1Y37csPkiyneYEQqWgFZwiUCeCBH1bE5yi4f+9LpUxs9/KCp4PU/t17wLL6HyHca5lQCATBbNq2c2UQl36EgxotUYme4TY2cnEx3RJKz7nRE4Grj3BbRc+EhDC8XswylqW+4gVHxZgocpzyvfRMk35So5p2DBP12VlJ8gvCQlYiEGTGWta6aQCnlKH34/yug2q7yoXf0HJWQ4p3Rf3C068=")
 
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("gpt", gpt))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, hello))
-app.add_handler(CallbackQueryHandler(buttons_handler))
+# app.add_handler(CallbackQueryHandler(buttons_handler))
 app.run_polling()
+
+
+# async def buttons_handler(update, context):
+#     query = update.callback_query.data
+#     if query == "start":
+#         await send_text(update, context, "Started")
+#     elif query == "stop":
+#         await send_text(update, context, "Stopped")
