@@ -25,3 +25,5 @@ env/
 # dotenv (секрети!)
 *.env
 .env
+
+.DS_Store
